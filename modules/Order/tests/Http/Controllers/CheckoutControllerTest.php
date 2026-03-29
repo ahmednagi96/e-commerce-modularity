@@ -25,7 +25,7 @@ test("it_successfull_creates_an_order",function(){
             ),
     );
 
-    //create valid token
+    //create valid tokenphp
     $paymentToken=PayBuddySdk::validToken();
     
     # act
@@ -54,6 +54,14 @@ test("it_successfull_creates_an_order",function(){
      $this->assertEquals("36",strlen($order->payment_id));
 
 
+     //Assert payment of ordre
+     $payment=$order->lastPayment;
+
+     $this->assertTrue($payment->user()->is($user));
+     $this->assertEquals(4000,$payment->total_in_cents);
+     $this->assertEquals("paid",$payment->status);
+     $this->assertEquals("payBubble",$payment->payment_gateway);
+     $this->assertEquals("36",strlen($payment->payment_id));
 
      //assert of order lines
      foreach($products as $product){
