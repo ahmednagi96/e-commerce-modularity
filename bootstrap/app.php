@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
         then: function () {
             Route::middleware('web')
                 ->prefix('orders')
-                ->name('orders.')
+                ->name('order::orders.')
                 ->group(base_path('modules/Order/routes.php'));
         },
         

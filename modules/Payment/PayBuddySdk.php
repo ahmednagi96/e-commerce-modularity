@@ -3,7 +3,7 @@
 namespace Modules\Payment;
 
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
+use Modules\Payment\Exceptions\PaymentException;
 use NumberFormatter;
 
 final class PayBuddySdk
@@ -38,17 +38,13 @@ final class PayBuddySdk
             return substr(self::validToken(), -35);
         }
 
-        public function validateToken(string $token):void{
-            if(! Str::isUuid($token)){
-                throw  ValidationException::withMessages(
-                    [
-                        "payment_token"=>"The given payment token is not valid."
-                    ]
-                
-                );
+        public function validateToken(string $token): void
+        {
+            if (! Str::isUuid($token)) {
+                throw PaymentException::invalidToken();
             }
-        
+        }
             
-    }
+    
 }
 

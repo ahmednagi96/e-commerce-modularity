@@ -30,7 +30,7 @@ test("it_successfull_creates_an_order",function(){
     
     # act
     /** @var TestCase $this */
-   $response=$this->actingAs($user)->postJson(route("orders.check-user-products"),[
+   $response=$this->actingAs($user)->postJson(route("order::orders.check-user-products"),[
         "payment_token"=>$paymentToken,
         "products"=>[
            0=> ["id"=>$products->first()->id,"quantity"=>1],
@@ -40,10 +40,14 @@ test("it_successfull_creates_an_order",function(){
    );
     
 
-   //assert 
+   //Assert 
 
+   $order=Order::query()->latest("id")->first();
 
-    $response->assertStatus(201);
+    $response->assertStatus(201)
+                ->assertJson([
+                    'orderUrl'=>$order->url(),
+                ]);
    
    //assert of order
     $order=Order::query()->latest("id")->first();

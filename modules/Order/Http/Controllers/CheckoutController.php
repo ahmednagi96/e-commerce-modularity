@@ -17,7 +17,7 @@ class CheckoutController extends Controller
 
 {
 
-    public function __construct(public PurchaseItems $purchaseItems)
+    public function __construct(protected PurchaseItems $purchaseItems)
     {
         
     }
@@ -26,15 +26,20 @@ class CheckoutController extends Controller
 
         $data = $request->validatedData();
         /** @var  CartItemCollection<CartItem> $cartItems */
+
+
+
         $cartItems=CartItemCollection::formCheckoutData($data['products']);
-        $this->purchaseItems->handle(
+        $order=$this->purchaseItems->handle(
             items: $cartItems,
             paymentProvider:PayBuddySdk::make(),
             paymentToken:$data['payment_token'],
             userID:$request->user()->id
         );
       
-        return response()->json([],201);
+        return response()->json([
+            'orderUrl'=>$order->url(),
+        ],201);
         
 
     }
