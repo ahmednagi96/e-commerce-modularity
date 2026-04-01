@@ -7,11 +7,15 @@ use Modules\Order\Models\Order;
 use Modules\Payment\PayBuddySdk;
 use Modules\Product\Database\Factories\ProductFactory;
 use Tests\TestCase;
+use Illuminate\Support\Facades\Mail;
+use Modules\Order\Mail\OrderRecieved;
 
 uses(TestCase::class,RefreshDatabase::class);
 test("it_successfull_creates_an_order",function(){
-            //arrange
-
+            //Arrange
+          
+            //Mail Fake
+            Mail::fake();
     # create user
     $user=UserFactory::new()->create();
 
@@ -48,7 +52,7 @@ test("it_successfull_creates_an_order",function(){
                 ->assertJson([
                     'orderUrl'=>$order->url(),
                 ]);
-   
+
    //assert of order
      $this->assertTrue($order->user()->is($user));
      $this->assertEquals(4000,$order->total_in_cents);
@@ -72,7 +76,10 @@ test("it_successfull_creates_an_order",function(){
         $this->assertEquals("1",$orderline->quantity);
         $this->assertEquals($product->price_in_cents,$orderline->product_price_in_cents);
      }
-
+    // Assert: check that the mail was "sent"
+    Mail::assertSent(OrderRecieved::class, function ($mail) use ($user) {
+        return $mail->hasTo($user->email);
+    });
      $products=$products->fresh();
      $this->assertEquals(9,$products->first()->stock);
      $this->assertEquals(9,$products->last()->stock);

@@ -11,6 +11,7 @@ use Modules\Order\Exceptions\OrderMissingOrderLinesExcException;
 use Modules\Payment\Models\Payment;
 use Modules\Product\CartItem;
 use Modules\Product\CartItemCollection;
+use NumberFormatter;
 
 class Order extends Model
 {
@@ -92,6 +93,15 @@ class Order extends Model
         $this->save();
     
         $this->lines()->saveMany($this->lines);
+    }
+
+
+    /** @return string */
+    public function localizedTotal():string
+    {
+        $numberFormatter= new NumberFormatter("en-US", NumberFormatter::CURRENCY);
+        return $numberFormatter->format($this->total_in_cents  / 100);
+
     }
     
     

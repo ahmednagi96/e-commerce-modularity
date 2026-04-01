@@ -32,7 +32,8 @@ class CheckoutController extends Controller
             items: $cartItems,
             paymentProvider:PayBuddySdk::make(),
             paymentToken:$data['payment_token'],
-            userID:$request->user()->id
+            userID:$request->user()->id,
+            userEmail:$request->user()->email
         );
       
         return response()->json([
