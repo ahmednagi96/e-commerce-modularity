@@ -24,21 +24,16 @@ class PurchaseItems
     public function handle(CartItemCollection $items, PayBuddySdk $paymentProvider, string $paymentToken, int $userID): Order
     {
 
-        $orderTotal = $items->totalInCents();
-
-        //Chrage
-        $chrage = $this->chargeAction->handle($paymentProvider, $paymentToken, $orderTotal);
-
-        $order = $this->databaseManager->transaction(function () use ($chrage, $orderTotal, $userID, $items) {
+        $order = $this->databaseManager->transaction(function () use ($userID, $items,$paymentProvider,$paymentToken) {
             $newOrder=Order::startForUser($userID);
             $newOrder->addOrderLinesFromCartItems($items);
             $newOrder->fulfill();
-           
             // drecease stock after create order
             $items->items()->each(function (CartItem $cartItem) {
                 $this->productStockManager->decrement($cartItem->productDto->id, $cartItem->quantity);
             });
-            $this->createPayment->handle(paymentId: $chrage["id"], orderTotal: $orderTotal, userID: $userID, orderId: $newOrder->id);
+            $chrage = $this->chargeAction->handle($paymentProvider, $paymentToken, $newOrder->total_in_cents);
+            $this->createPayment->handle(paymentId: $chrage["id"], orderTotal: $newOrder->total_in_cents, userID: $userID, orderId: $newOrder->id);
             return $newOrder;
         });
         return $order;

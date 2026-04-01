@@ -25,10 +25,6 @@ class CartItemCollection
                 return new self($cartItems);
         }
 
-        public function totalInCents():float{
-           return $this->items->sum(fn(CartItem $cartItem)=> $cartItem->productDto->priceInCents * $cartItem->quantity);
-        }
-
         /** 
          * @return Collection<CartItem> 
          */

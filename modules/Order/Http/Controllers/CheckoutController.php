@@ -27,8 +27,6 @@ class CheckoutController extends Controller
         $data = $request->validatedData();
         /** @var  CartItemCollection<CartItem> $cartItems */
 
-
-
         $cartItems=CartItemCollection::fromCheckoutData($data['products']);
         $order=$this->purchaseItems->handle(
             items: $cartItems,

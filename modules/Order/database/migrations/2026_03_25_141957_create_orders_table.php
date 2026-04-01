@@ -14,8 +14,6 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string("payment_id")->nullable();
-            $table->string("payment_method")->nullable();;
             $table->foreignIdFor(User::class);
             $table->decimal("total_in_cents",8,2)->default(0);
             $table->string('status');

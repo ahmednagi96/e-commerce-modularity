@@ -14,14 +14,13 @@ use Modules\Product\CartItemCollection;
 
 class Order extends Model
 {
+    
 
     protected $table = "orders";
     protected $fillable = [
         "user_id",
         "total_in_cents",
         "status",
-        "payment_id",
-        "payment_method"
     ];
 
 
@@ -69,20 +68,17 @@ class Order extends Model
     /** @return void */
     public function addOrderLinesFromCartItems(CartItemCollection $items): void
     {
-        foreach ($items as $item) {
-            $this->lines->push(
-             OrderLine::make([
-                    "product_id" => $item->productDto->id,
-                    "product_price_in_cents" => $item->productDto->priceInCents,
-                    "quantity" => $item->quantity,
-                ])
-            );
+        foreach($items->items() as $item){
+            $this->lines->push(OrderLine::make([
+                "product_id"=>$item->productDto->id,
+                "quantity"=>$item->quantity,
+                "product_price_in_cents"=>$item->productDto->priceInCents,
+            ]));
         }
     
-        $this->total_in_cents = $this->lines->sum(
-            fn(OrderLine $orderLine) => $orderLine->product_price_in_cents * $orderLine->quantity
-        );
+        $this->total_in_cents=$this->lines->sum(fn(OrderLine $orderLine)=>$orderLine->quantity * $orderLine->product_price_in_cents);
     }
+    
     
     /** @return void */
     /** @throws  OrderMissingOrderLinesExcException */
