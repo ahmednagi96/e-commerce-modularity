@@ -2,11 +2,11 @@
 
 namespace Modules\Order\Events;
 
-use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Modules\Product\CartItemCollection;
+use Modules\Order\DTOs\OrderDto;
+use Modules\User\DTOs\UserDto;
 
 readonly class OrderFulfilled
 {
@@ -16,12 +16,8 @@ readonly class OrderFulfilled
      * Create a new event instance.
      */
     public function __construct(
-        public string $userEmail,
-        public int $orderId,
-        public float $totalInCents,
-        public string $localizedTotal,
-        public CartItemCollection $cartItems,
-        public int $userId
+        public UserDto $userDto,
+         public OrderDto $orderDto,
     )
     {
         //

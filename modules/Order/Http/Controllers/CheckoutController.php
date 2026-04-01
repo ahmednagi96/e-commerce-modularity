@@ -5,9 +5,11 @@ namespace Modules\Order\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Modules\Order\Actions\PurchaseItems;
 use Modules\Order\Http\Requests\CheckoutRequest;
+use Modules\Payment\DTOs\PendingPayment;
 use Modules\Payment\PayBuddySdk;
 use Modules\Product\CartItem;
 use Modules\Product\CartItemCollection;
+use Modules\User\DTOs\UserDto;
 
 // use Modules\Product\Models\Product;
 
@@ -25,19 +27,25 @@ class CheckoutController extends Controller
     {
 
         $data = $request->validatedData();
-        /** @var  CartItemCollection<CartItem> $cartItems */
 
+        /** @var  CartItemCollection<CartItem> $cartItems */
         $cartItems=CartItemCollection::fromCheckoutData($data['products']);
-        $order=$this->purchaseItems->handle(
+
+        /** @var  PendingPayment $payment */
+        $pendingPayment=new PendingPayment(PayBuddySdk::make(),$data['payment_token']);
+
+        /** @var UserDto $userDto */
+        $userDto=UserDto::fromEloguentModel($request->user());
+
+
+        $orderDto=$this->purchaseItems->handle(
             items: $cartItems,
-            paymentProvider:PayBuddySdk::make(),
-            paymentToken:$data['payment_token'],
-            userID:$request->user()->id,
-            userEmail:$request->user()->email
+            pendingPayment: $pendingPayment,
+            userDTO: $userDto
         );
       
         return response()->json([
-            'orderUrl'=>$order->url(),
+            'orderUrl'=>$orderDto->url,
         ],201);
         
 

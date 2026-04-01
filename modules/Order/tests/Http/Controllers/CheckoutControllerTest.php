@@ -10,102 +10,106 @@ use Tests\TestCase;
 use Illuminate\Support\Facades\Mail;
 use Modules\Order\Mail\OrderRecieved;
 
-uses(TestCase::class,RefreshDatabase::class);
-test("it_successfull_creates_an_order",function(){
-            //Arrange
-          
-            //Mail Fake
-            Mail::fake();
+uses(TestCase::class, RefreshDatabase::class);
+test("it_successfull_creates_an_order", function () {
+    //Arrange
+
+    //Mail Fake
+    Mail::fake();
     # create user
-    $user=UserFactory::new()->create();
+    $user = UserFactory::new()->create();
 
     //cerate product 
 
-    $products=ProductFactory::new()->count(2)->create(
+    $products = ProductFactory::new()->count(2)->create(
         new Sequence(
-            
-                ["name"=>"product 1","price_in_cents"=>3000,"stock"=>10],
-                ["name"=>"product 2","price_in_cents"=>1000,"stock"=>10],
-            ),
+
+            ["name" => "product 1", "price_in_cents" => 3000, "stock" => 10],
+            ["name" => "product 2", "price_in_cents" => 1000, "stock" => 10],
+        ),
     );
 
     //create valid tokenphp
-    $paymentToken=PayBuddySdk::validToken();
+    $paymentToken = PayBuddySdk::validToken();
     
     # act
     /** @var TestCase $this */
-   $response=$this->actingAs($user)->postJson(route("order::orders.check-user-products"),[
-        "payment_token"=>$paymentToken,
-        "products"=>[
-           0=> ["id"=>$products->first()->id,"quantity"=>1],
-           1=> ["id"=>$products->last()->id,"quantity"=>1],
+    $response = $this->actingAs($user)->postJson(
+        route("order::orders.check-user-products"),
+        [
+            "payment_token" => $paymentToken,
+            "products" => [
+                0 => ["id" => $products->first()->id, "quantity" => 1],
+                1 => ["id" => $products->last()->id, "quantity" => 1],
             ],
         ]
-   );
-    
+    );
 
-   //Assert 
 
-   $order=Order::query()->latest("id")->first();
+    //Assert 
+
+    $order = Order::query()->latest("id")->first();
 
     $response->assertStatus(201)
-                ->assertJson([
-                    'orderUrl'=>$order->url(),
-                ]);
+        ->assertJson([
+            'orderUrl' => $order->url(),
+        ]);
 
-   //assert of order
-     $this->assertTrue($order->user()->is($user));
-     $this->assertEquals(4000,$order->total_in_cents);
-     $this->assertEquals("completed",$order->status);
-     //$this->assertEquals("payBubble",$order->payment_method);
-     //$this->assertEquals("36",strlen($order->payment_id));
+    //assert of order
+    $this->assertTrue($order->user()->is($user));
+    $this->assertEquals(4000, $order->total_in_cents);
+    $this->assertEquals("completed", $order->status);
+    //$this->assertEquals("payBubble",$order->payment_method);
+    //$this->assertEquals("36",strlen($order->payment_id));
 
 
-     //Assert payment of ordre
-     $payment=$order->lastPayment;
+    //Assert payment of ordre
+    $payment = $order->lastPayment;
 
-     $this->assertTrue($payment->user()->is($user));
-     $this->assertEquals(4000,$payment->total_in_cents);
-     $this->assertEquals("paid",$payment->status);
-     $this->assertEquals("payBubble",$payment->payment_gateway);
-     $this->assertEquals("36",strlen($payment->payment_id));
+    $this->assertTrue($payment->user()->is($user));
+    $this->assertEquals(4000, $payment->total_in_cents);
+    $this->assertEquals("paid", $payment->status);
+    $this->assertEquals("payBubble", $payment->payment_gateway);
+    $this->assertEquals("36", strlen($payment->payment_id));
 
-     //assert of order lines
-     foreach($products as $product){
-        $orderline=$product->lines()->where("product_id",$product->id)->first();
-        $this->assertEquals("1",$orderline->quantity);
-        $this->assertEquals($product->price_in_cents,$orderline->product_price_in_cents);
-     }
+    //assert of order lines
+    foreach ($products as $product) {
+        $orderline = $product->lines()->where("product_id", $product->id)->first();
+        $this->assertEquals("1", $orderline->quantity);
+        $this->assertEquals($product->price_in_cents, $orderline->product_price_in_cents);
+    }
     // Assert: check that the mail was "sent"
     Mail::assertSent(OrderRecieved::class, function ($mail) use ($user) {
         return $mail->hasTo($user->email);
     });
-     $products=$products->fresh();
-     $this->assertEquals(9,$products->first()->stock);
-     $this->assertEquals(9,$products->last()->stock);
+    $products = $products->fresh();
+    $this->assertEquals(9, $products->first()->stock);
+    $this->assertEquals(9, $products->last()->stock);
 });
 
-test("it_fails_with_an_invalid_token",function(){
+test("it_fails_with_an_invalid_token", function () {
 
     //arrange
-    $user=UserFactory::new()->create();
-    $product=ProductFactory::new()->create();
-    $paymentToken=PayBuddySdk::invalidToken();
+    $user = UserFactory::new()->create();
+    $product = ProductFactory::new()->create();
+    $paymentToken = PayBuddySdk::invalidToken();
 
     //act
-      /** @var TestCase $this */
-    $response=$this->actingAs($user)->postJson(route("order::orders.check-user-products"),[
-        "payment_token"=>$paymentToken,
-        "products"=>[
-           0=> ["id"=>$product->id,"quantity"=>1],
+    /** @var TestCase $this */
+    $response = $this->actingAs($user)->postJson(
+        route("order::orders.check-user-products"),
+        [
+            "payment_token" => $paymentToken,
+            "products" => [
+                0 => ["id" => $product->id, "quantity" => 1],
             ],
         ]
-   );  /** @var TestCase $this */
+    );
+    /** @var TestCase $this */
 
-   //assert 
+    //assert 
     $response->assertStatus(422)
-              ->assertJsonValidationErrors(['payment_token']);
-
+        ->assertJsonValidationErrors(['payment_token']);
 });
 
 
