@@ -4,7 +4,6 @@ namespace Modules\Order\Actions;
 
 use Illuminate\Database\DatabaseManager;
 use Modules\Order\Models\Order;
-use Modules\Order\Models\OrderLine;
 use Modules\Payment\Actions\ChargeAction;
 use Modules\Payment\Actions\CreatePaymentForOrder;
 use Modules\Payment\PayBuddySdk;
@@ -26,43 +25,20 @@ class PurchaseItems
     {
 
         $orderTotal = $items->totalInCents();
-        //chrage
+
+        //Chrage
         $chrage = $this->chargeAction->handle($paymentProvider, $paymentToken, $orderTotal);
 
-
-
         $order = $this->databaseManager->transaction(function () use ($chrage, $orderTotal, $userID, $items) {
-            /** order module */
-            /** @var CreatePaymentForOrder  $createPayment */
-            $newOrder = Order::query()->create([
-                "payment_id" => $chrage["id"],
-                "payment_method" => "payBubble",
-                "status" => "paid",
-                "total_in_cents" => $orderTotal,
-                "user_id" => $userID,
-            ]);
-
-
-            $payment = $this->createPayment->handle(paymentId: $chrage["id"], orderTotal: $orderTotal, userID: $userID, orderId: $newOrder->id);
-
+            $newOrder=Order::startForUser($userID);
+            $newOrder->addOrderLinesFromCartItems($items);
+            $newOrder->fulfill();
+           
             // drecease stock after create order
             $items->items()->each(function (CartItem $cartItem) {
                 $this->productStockManager->decrement($cartItem->productDto->id, $cartItem->quantity);
             });
-
-
-            //create order_lines
-            $orderLinesData = $items->items()->map(function (CartItem $cartItem) use ($newOrder) {
-                return [
-                    "product_id" => $cartItem->productDto->id,
-                    "order_id" => $newOrder->id,
-                    "product_price_in_cents" => $cartItem->productDto->priceInCents,
-                    "quantity" => $cartItem->quantity,
-                    "created_at" => now(),
-                    "updated_at" => now(),
-                ];
-            })->toArray();
-            OrderLine::insert($orderLinesData);
+            $this->createPayment->handle(paymentId: $chrage["id"], orderTotal: $orderTotal, userID: $userID, orderId: $newOrder->id);
             return $newOrder;
         });
         return $order;

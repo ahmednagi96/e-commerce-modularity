@@ -16,7 +16,7 @@ class CartItemCollection
         {            
         }
 
-        public static function formCheckoutData(array $data): CartItemCollection
+        public static function fromCheckoutData(array $data): CartItemCollection
         {
              /**  @var Collection<CartItem> $cartItems */
             $cartItems=collect($data)->map(function (array $product) {

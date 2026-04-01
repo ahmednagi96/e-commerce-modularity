@@ -29,7 +29,7 @@ class CheckoutController extends Controller
 
 
 
-        $cartItems=CartItemCollection::formCheckoutData($data['products']);
+        $cartItems=CartItemCollection::fromCheckoutData($data['products']);
         $order=$this->purchaseItems->handle(
             items: $cartItems,
             paymentProvider:PayBuddySdk::make(),
