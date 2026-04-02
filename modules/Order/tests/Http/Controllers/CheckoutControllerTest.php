@@ -9,6 +9,7 @@ use Modules\Product\Database\Factories\ProductFactory;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Mail;
 use Modules\Order\Mail\OrderRecieved;
+use Modules\Payment\PaymentProvider;
 
 uses(TestCase::class, RefreshDatabase::class);
 test("it_successfull_creates_an_order", function () {
@@ -69,7 +70,7 @@ test("it_successfull_creates_an_order", function () {
     $this->assertTrue($payment->user()->is($user));
     $this->assertEquals(4000, $payment->total_in_cents);
     $this->assertEquals("paid", $payment->status);
-    $this->assertEquals("payBubble", $payment->payment_gateway);
+    $this->assertEquals(PaymentProvider::PAY_BUDDY, $payment->payment_gateway);
     $this->assertEquals("36", strlen($payment->payment_id));
 
     //assert of order lines

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Modules\Order\Actions\PurchaseItems;
 use Modules\Order\Http\Requests\CheckoutRequest;
 use Modules\Payment\DTOs\PendingPayment;
-use Modules\Payment\PayBuddySdk;
+use Modules\Payment\Interfaces\PaymentGateway;
 use Modules\Product\CartItem;
 use Modules\Product\CartItemCollection;
 use Modules\User\DTOs\UserDto;
@@ -19,7 +19,10 @@ class CheckoutController extends Controller
 
 {
 
-    public function __construct(protected PurchaseItems $purchaseItems)
+    public function __construct(
+        protected PurchaseItems $purchaseItems,
+        protected PaymentGateway $paymentGateway
+        )
     {
         
     }
@@ -32,7 +35,7 @@ class CheckoutController extends Controller
         $cartItems=CartItemCollection::fromCheckoutData($data['products']);
 
         /** @var  PendingPayment $payment */
-        $pendingPayment=new PendingPayment(PayBuddySdk::make(),$data['payment_token']);
+        $pendingPayment=new PendingPayment($this->paymentGateway,$data['payment_token']);
 
         /** @var UserDto $userDto */
         $userDto=UserDto::fromEloguentModel($request->user());
