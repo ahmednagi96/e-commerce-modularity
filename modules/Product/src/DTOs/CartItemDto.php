@@ -1,10 +1,8 @@
 <?php 
 
-namespace Modules\Product;
-use Modules\Product\Models\Product;
-use Modules\Product\ProductDto;
+namespace Modules\Product\DTOs;
 
-readonly class CartItem{
+readonly class CartItemDto{
     public function __construct(
 
         public ProductDto $productDto,

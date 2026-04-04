@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Modules\Order\Exceptions\OrderMissingOrderLinesExcException;
+use Modules\Order\OrderMissingOrderLinesExcException;
 use Modules\Payment\Models\Payment;
 use Modules\Product\CartItem;
-use Modules\Product\CartItemCollection;
+use Modules\Product\Collections\CartItemCollection;
 use NumberFormatter;
 
 class Order extends Model

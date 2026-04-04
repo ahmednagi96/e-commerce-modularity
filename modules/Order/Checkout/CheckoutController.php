@@ -4,8 +4,8 @@ namespace Modules\Order\Checkout;
 use App\Http\Controllers\Controller;
 use Modules\Payment\DTOs\PendingPayment;
 use Modules\Payment\Interfaces\PaymentGateway;
-use Modules\Product\CartItem;
-use Modules\Product\CartItemCollection;
+use Modules\Product\Collections\CartItemCollection;
+use Modules\Product\DTOs\CartItemDto;
 use Modules\User\DTOs\UserDto;
 
 // use Modules\Product\Models\Product;
@@ -28,7 +28,7 @@ class CheckoutController extends Controller
 
         $data = $request->validatedData();
 
-        /** @var  CartItemCollection<CartItem> $cartItems */
+        /** @var  CartItemCollection<CartItemDto> $cartItems */
         $cartItems=CartItemCollection::fromCheckoutData($data['products']);
 
         /** @var  PendingPayment $payment */

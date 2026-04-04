@@ -9,7 +9,7 @@ use Modules\Payment\Actions\ChargeAction;
 use Modules\Payment\Actions\CreatePaymentForOrder;
 use Modules\Payment\DTOs\PendingPayment;
 use Modules\Payment\PaymentDetails;
-use Modules\Product\CartItemCollection;
+use Modules\Product\Collections\CartItemCollection;
 use Modules\Product\Warehouse\ProductStockManager;
 use Modules\User\DTOs\UserDto;
 

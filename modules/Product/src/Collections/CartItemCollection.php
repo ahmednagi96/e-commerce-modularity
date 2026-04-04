@@ -1,14 +1,16 @@
 <?php
 
-namespace  Modules\Product;
+namespace  Modules\Product\Collections;
 
 use Illuminate\Support\Collection;
+use Modules\Product\DTOs\CartItemDto;
+use Modules\Product\DTOs\ProductDto;
 use Modules\Product\Models\Product;
 
 class CartItemCollection
 {
     /**
-     *  @param Collection<CartItem> $items 
+     *  @param Collection<CartItemDto> $items 
      * */
     public function __construct(
         private Collection $items
@@ -16,15 +18,15 @@ class CartItemCollection
 
     public static function fromCheckoutData(array $data): CartItemCollection
     {
-        /**  @var Collection<CartItem> $cartItems */
+        /**  @var Collection<CartItemDto> $cartItems */
         $cartItems = collect($data)->map(function (array $product) {
-            return new CartItem(ProductDto::fromEloquentMOdel(Product::find($product['id'])), $product['quantity']);
+            return new CartItemDto(ProductDto::fromEloquentMOdel(Product::find($product['id'])), $product['quantity']);
         });
         return new self($cartItems);
     }
 
     /** 
-     * @return Collection<CartItem> 
+     * @return Collection<CartItemDto> 
      */
     public function items(): Collection
     {
