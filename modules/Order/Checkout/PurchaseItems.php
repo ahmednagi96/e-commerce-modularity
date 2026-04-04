@@ -1,12 +1,10 @@
 <?php
 
-namespace Modules\Order\Actions;
-
+namespace Modules\Order\Checkout;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
-use Modules\Order\DTOs\OrderDto;
-use Modules\Order\Events\OrderFulfilled;
-use Modules\Order\Models\Order;
+use Modules\Order\Contracts\OrderDto;
+use Modules\Order\Order;
 use Modules\Payment\Actions\ChargeAction;
 use Modules\Payment\Actions\CreatePaymentForOrder;
 use Modules\Payment\DTOs\PendingPayment;

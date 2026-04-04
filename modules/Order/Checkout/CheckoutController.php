@@ -1,10 +1,7 @@
 <?php
 
-namespace Modules\Order\Http\Controllers;
-
+namespace Modules\Order\Checkout;
 use App\Http\Controllers\Controller;
-use Modules\Order\Actions\PurchaseItems;
-use Modules\Order\Http\Requests\CheckoutRequest;
 use Modules\Payment\DTOs\PendingPayment;
 use Modules\Payment\Interfaces\PaymentGateway;
 use Modules\Product\CartItem;

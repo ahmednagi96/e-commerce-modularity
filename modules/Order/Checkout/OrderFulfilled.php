@@ -1,11 +1,10 @@
 <?php
 
-namespace Modules\Order\Events;
-
+namespace Modules\Order\Checkout;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Modules\Order\DTOs\OrderDto;
+use Modules\Order\Contracts\OrderDto;
 use Modules\User\DTOs\UserDto;
 
 readonly class OrderFulfilled

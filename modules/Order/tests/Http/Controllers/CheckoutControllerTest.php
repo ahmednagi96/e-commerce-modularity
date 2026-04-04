@@ -3,12 +3,12 @@
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Modules\Order\Models\Order;
+use Modules\Order\Order;
 use Modules\Payment\PayBuddySdk;
 use Modules\Product\Database\Factories\ProductFactory;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Mail;
-use Modules\Order\Mail\OrderRecieved;
+use Modules\Order\Checkout\OrderRecieved;
 use Modules\Payment\PaymentProvider;
 
 uses(TestCase::class, RefreshDatabase::class);

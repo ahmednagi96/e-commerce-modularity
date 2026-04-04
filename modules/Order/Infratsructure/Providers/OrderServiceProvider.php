@@ -1,13 +1,13 @@
 <?php
 
-namespace Modules\Order\Providers;
+namespace Modules\Order\Infratsructure\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Modules\Order\Events\OrderFulfilled;
-use Modules\Order\Events\SendOrderConfirmationEmail;
-#use Modules\Order\ViewComponents\OrderLine;
+use Modules\Order\Checkout\OrderFulfilled;
+use Modules\Order\Checkout\SendOrderConfirmationEmail;
+#use Modules\Order\Ui\ViewComponents\OrderLine;
 use Modules\Product\Events\DecreaseProductStock;
 
 class OrderServiceProvider extends ServiceProvider
@@ -21,7 +21,7 @@ class OrderServiceProvider extends ServiceProvider
        $this->loadViewsFrom(__DIR__."/../Views","order");
       // Blade::anonymousComponentPath(__DIR__."/../Views/components","order");
        //Blade::component("order-test",OrderLine::class);//
-       Blade::componentNamespace("Modules\\Order\\ViewComponents","order");
+       Blade::componentNamespace("Modules\\Order\\Ui\\ViewComponents","order");
        Event::listen(
         OrderFulfilled::class,
         SendOrderConfirmationEmail::class

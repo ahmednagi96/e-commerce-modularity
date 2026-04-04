@@ -1,7 +1,6 @@
 <?php
 
-namespace Modules\Order\Mail;
-
+namespace Modules\Order\Checkout;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;

@@ -5,7 +5,7 @@ namespace  Modules\Product\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Modules\Order\Models\OrderLine;
+use Modules\Order\OrderLine;
 use Modules\Product\Database\Factories\ProductFactory;
 
 class Product extends Model

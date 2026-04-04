@@ -2,8 +2,8 @@
 
 namespace Modules\Product\Events;;
 
-use Modules\Order\DTOs\OrderLinesDto;
-use Modules\Order\Events\OrderFulfilled;
+use Modules\Order\Checkout\OrderFulfilled;
+use Modules\Order\Contracts\OrderLinesDto;
 use Modules\Product\CartItem;
 use Modules\Product\Warehouse\ProductStockManager;
 

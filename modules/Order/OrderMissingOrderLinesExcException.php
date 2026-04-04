@@ -1,7 +1,6 @@
 <?php 
 
-namespace Modules\Order\Exceptions;
-
+namespace Modules\Order;
 use Symfony\Component\HttpFoundation\Response;
 
 class OrderMissingOrderLinesExcException extends \Exception

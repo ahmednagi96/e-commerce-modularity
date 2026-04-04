@@ -5,7 +5,7 @@ namespace Modules\Payment\Models;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Modules\Order\Models\Order;
+use Modules\Order\Order;
 use Modules\Payment\PaymentProvider;
 
 class Payment extends Model
